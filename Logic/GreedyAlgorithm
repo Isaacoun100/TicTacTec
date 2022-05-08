@@ -1,9 +1,22 @@
 #lang racket
 
-#|
-   This is an example code
-   that is used to not let
-     the files blank
-|#
+(require racket)
 
-(print 1/2)  
+;Returns the bigger number of the list
+(define (getNumMax listMax num)
+  (cond ((null? listMax)
+         num)
+        ((>= (car listMax)num)
+         (getNumMax (cdr listMax)(car listMax)))
+        (else
+         (getNumMax (cdr listMax) num))))
+
+;Returns the smallest member of the list
+(define (getNumMin listMin num)
+  (cond ((null? listMin)
+         num)
+        ((<= (car listMin)num)
+         (getNumMin (cdr listMin)(car listMin)))
+        (else
+         (getNumMin (cdr listMin)num))))
+ 
