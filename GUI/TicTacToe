@@ -1,9 +1,53 @@
 #lang racket
 
-#|
-   This is an example code
-   that is used to not let
-     the files blank
+(require racket)
+
+#| In the following section you will find the fuctions responsible for the checking if
+ # the player or the machine, won or draw. We should corroborate the matrix vertically,
+ # horizontaly and diagonally to check if we have a win, or a draw. The methods shown
+ # displayed  below will be executed every turn to confirm if someone won, we have a
+ # draw or the game continues
 |#
 
-(print 1/2)  
+ ; Returns true or false depending on weather or not there's a vertical win
+(define (checkVertical matrix M N I J num)
+  (cond ((equal? J N)#f)
+        ((equal? I M)#f)
+        ((and(equal? (getMatrix matrix I J) num)(checkVerticalAux matrix M N (+ I 1) J num))
+         #t)
+        (else (checkVertical matrix M N 0 (+ J 1) num))))
+
+
+
+; This funtion will return 10 if the player has won, -10 if the computer won or 0
+; there no winner yet
+
+(define (getState matrix M N)
+  (cond ((checkVertical matrix M N 0 0 1)
+         10) ; Check if the player won vertically
+        ((checkVertical matrix M N 0 0 -1)
+         -10) ; Check if the machine won vertically
+        
+        ((checkHorizontal matrix M N 0 0 1)
+         10) ; Check if the player won horizontally
+        ((checkHorizontal matrix M N 0 0 -1)
+         -10) ; Check if the machine won horizontally
+        
+        ((CheckDiagonal matrix M N 1)
+         10); Check if the player won diagonally
+        ((CheckDiagonal matrix M N -1)
+         -10); Check if the machine won diagonally
+        
+        (else 0))) ; There's no winner yet
+
+
+
+
+
+
+
+
+
+
+
+
