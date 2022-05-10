@@ -2,13 +2,6 @@
 
 (require racket)
 
-#| In the following section you will find the fuctions responsible for the checking if
- # the player or the machine, won or draw. We should corroborate the matrix vertically,
- # displayed  below will be executed every turn to confirm if someone won, we have a
- # draw or the game continues
-|#
- # horizontaly and diagonally to check if we have a win, or a draw. The methods shown
-
 ;Returns the bigger number of the list
 (define (getNumMax listMax num)
   (cond ((null? listMax)
@@ -85,12 +78,18 @@
          #f)
         (else #t)))
 
-         
+#| In the following section you will find the fuctions responsible for the checking if
+ # the player or the machine, won or draw. We should corroborate the matrix vertically,
+ # horizontaly and diagonally to check if we have a win, or a draw. The methods shown
+ # displayed  below will be executed every turn to confirm if someone won, we have a
+ # draw or the game continues
+|#
+        
 ; Returns true or false depending on whether or not there's a horizontal win
 (define (checkHorizontal matrix M N I J num)
   (cond ((equal? I M)#f) 
         ((equal? J N)#f)
-        ((and(equal?(getMatrix matrix I J) num)
+        ((and(equal?(getMatrixValue matrix I J) num)
              (checkHorizontalAux matrix M N I (+ J 1) num))
          #t)
         (else (checkHorizontal matrix M N (+ I 1) J num))))
@@ -100,7 +99,7 @@
   (cond ((equal? I M)#f)
         ((equal? J N)#t)
         ((and
-          (equal?(getMatrix matrix I J) num)
+          (equal?(getMatrixValue matrix I J) num)
           (checkHorizontalAux matrix M N I (+ J 1) num))
          #t)
         (else #f)))  
@@ -109,7 +108,7 @@
 (define (checkVertical matrix M N I J num)
   (cond ((equal? J N)#f)
         ((equal? I M)#f)
-        ((and(equal? (getMatrix matrix I J) num)
+        ((and(equal? (getMatrixValue matrix I J) num)
              (checkVerticalAux matrix M N (+ I 1) J num))#t)
         
         (else
@@ -119,7 +118,7 @@
 (define (checkVerticalAux matrix M N I J num)
   (cond ((equal? J N)#f)
         ((equal? I M)#t)
-        ((and(equal? (getMatrix matrix I J) num)
+        ((and(equal? (getMatrixValue matrix I J) num)
              (checkVerticalAux matrix M N (+ I 1) J num))#t)
         (else #f)))
 
@@ -136,9 +135,9 @@
   (cond ((equal? J N) #f)
         ((or (>= (+ I 2) M) (>= (+ J 2) N))
          (checkFirstDiagonal matrix M N 0 (+ J 1) num))
-        ((and (equal? (getMatrix matrix I J) (getMatrix matrix (+ I 1) (+ J 1)))
-              (equal? (getMatrix matrix (+ I 1) (+ J 1)) (getMatrix matrix (+ I 2) (+ J 2)))
-              (equal? (getMatrix matrix (+ I 2) (+ J 2)) num))
+        ((and (equal? (getMatrixValue matrix I J) (getMatrixValue matrix (+ I 1) (+ J 1)))
+              (equal? (getMatrixValue matrix (+ I 1) (+ J 1)) (getMatrixValue matrix (+ I 2) (+ J 2)))
+              (equal? (getMatrixValue matrix (+ I 2) (+ J 2)) num))
          (cond ((or (>= (+ I 3) M) (>= (+ J 3) N))
                 #t)
                (else (checkFirstDiagonal matrix M N (+ I 1) (+ J 1) num))))
@@ -151,9 +150,9 @@
   (cond ((equal? I M) #f)
         ((or (>= (+ I 2) M) (>= (+ J 2) N))
          (checkSecondDiagonal matrix M N (+ I 1) 0 num))
-        ((and (equal? (getMatrix matrix I J) (getMatrix matrix (+ I 1) (+ J 1)))
-              (equal? (getMatrix matrix (+ I 1) (+ J 1)) (getMatrix matrix (+ I 2) (+ J 2)))
-              (equal? (getMatrix matrix (+ I 2) (+ J 2)) num))
+        ((and (equal? (getMatrixValue matrix I J) (getMatrixValue matrix (+ I 1) (+ J 1)))
+              (equal? (getMatrixValue matrix (+ I 1) (+ J 1)) (getMatrixValue matrix (+ I 2) (+ J 2)))
+              (equal? (getMatrixValue matrix (+ I 2) (+ J 2)) num))
          (cond ((or (>= (+ I 3) M) (>= (+ J 3) N))
                 #t)
                (else (checkSecondDiagonal matrix M N (+ I 1) (+ J 1) num))))
@@ -174,9 +173,9 @@
         ((checkHorizontal matrix M N 0 0 -1)
          -10) ; Check if the machine won horizontally
         
-        ((CheckDiagonal matrix M N 1)
+        ((checkDiagonal matrix M N 1)
          10); Check if the player won diagonally
-        ((CheckDiagonal matrix M N -1)
+        ((checkDiagonal matrix M N -1)
          -10); Check if the machine won diagonally
         
         (else 0))) ; There's no winner yet

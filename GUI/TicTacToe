@@ -1,9 +1,0 @@
-#lang racket
-
-#|
-   This is an example code
-   that is used to not let
-     the files blank
-|#
-
-(print 1/2)
