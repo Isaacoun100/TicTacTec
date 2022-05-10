@@ -19,4 +19,36 @@
          (getNumMin (cdr listMin)(car listMin)))
         (else
          (getNumMin (cdr listMin)num))))
- 
+
+;Returns the desired value found in the position of the matrix
+(define (getMatrixValue matrix i j)
+  (cond ((null? matrix)#f)
+        ((equal? i 0)
+         (getMatrixValueAux (car matrix) j))
+        (else
+         (getMatrixValue (cdr matrix) (- i 1) j))))
+
+;Travels the columns of the matrix searching for the desired value
+(define (getMatrixValueAux matrix j)
+  (cond ((null? matrix) #f)
+        ((equal? j 0)
+         (car matrix))
+        (else (getMatrixValueAux (cdr matrix) (- j 1)))))
+
+;Function that appends a new value and returns the matrix
+(define(appendValueMatrix matrix i j newValue)
+  (cond ((null? matrix)
+         '())
+        ((equal? i 0)
+         (append (list(appendValueMatrixAux(car matrix) j newValue))(cdr matrix)))
+        (else
+         (append(list(car matrix))(appendValueMatrixAux(cdr matrix)(- i 1) j newValue)))))
+
+(define (appendValueMatrixAux matrix j newValue)
+  (cond ((null? matrix)
+         '())
+        ((equal? j 0)
+         (cons newValue (cdr matrix)))
+        (else
+         (append (list(car matrix))(appendValueMatrixAux(cdr matrix)(- j 1) newValue)))))
+         
