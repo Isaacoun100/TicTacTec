@@ -53,30 +53,28 @@
         (else
          (append (list(car matrix))(appendValueMatrixAux(cdr matrix)(- j 1) newValue)))))
 
-;Define el conjunto de:
-;Espacios vacios = 0 (candidatos).
-;Espacios X = 1 (jugador).
-;Espacios O = -1 (maquina).
-(define (candidateSet matrix x y M N num)
-  (cond ((equal? x M)
-                 '())
-        (else
-         (append(candidateSetAux (car matrix) x y M N num)
-                (candidateSet (cdr matrix) (+ x 1) y M N num)))))
+;Empty spaces are represented as a 0, the symbol X is used for the players represented as 1 on the matrix,
+;and O is represented for the machine using -1 on the matrix.
+(define (setCandidates matrix i j M N num)
+  (cond ((equal? i M)
+         '())
+        (else (append(setCandidatesAux (car matrix) i j M N num)
+                     (setCandidates (cdr matrix)(+ i 1) j M N num)))))
 
 
-(define (candidateSetAux matrix x y M N num)
-  (cond ((equal? y N)
+;Auxiliar function for candidateSet
+(define (setCandidatesAux matrix i j M N num)
+  (cond ((equal? j N)
          '())
         (else
          (cond ((equal? (car matrix) num)
-                (cons (list x y)(candidateSetAux (cdr matrix) x (+ y 1) M N num)))
+                (cons (list i j)(setCandidatesAux (cdr matrix) i (+ j 1) M N num)))
                (else
-                (candidateSetAux (cdr matrix) x (+ y 1) M N num))))))
+                (setCandidatesAux (cdr matrix) i (+ j 1) M N num))))))
 
-; Verifies how many moves are left 
+; Verifies how many moves are left to do
 (define (movesLeft matrix M N)
-  (cond ((equal? (candidateSet matrix 0 0 M N 0) '())
+  (cond ((equal? (setCandidates matrix 0 0 M N 0) '())
          #f)
         (else #t)))
 
