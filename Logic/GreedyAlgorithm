@@ -44,6 +44,7 @@
         (else
          (append(list(car matrix))(appendValueMatrixAux(cdr matrix)(- i 1) j newValue)))))
 
+;Recursive Function that appends a new value and returns the matrix
 (define (appendValueMatrixAux matrix j newValue)
   (cond ((null? matrix)
          '())
@@ -51,4 +52,32 @@
          (cons newValue (cdr matrix)))
         (else
          (append (list(car matrix))(appendValueMatrixAux(cdr matrix)(- j 1) newValue)))))
+
+;Define el conjunto de:
+;Espacios vacios = 0 (candidatos).
+;Espacios X = 1 (jugador).
+;Espacios O = -1 (maquina).
+(define (candidateSet matrix x y M N num)
+  (cond ((equal? x M)
+                 '())
+        (else
+         (append(candidateSetAux (car matrix) x y M N num)
+                (candidateSet (cdr matrix) (+ x 1) y M N num)))))
+
+
+(define (candidateSetAux matrix x y M N num)
+  (cond ((equal? y N)
+         '())
+        (else
+         (cond ((equal? (car matrix) num)
+                (cons (list x y)(candidateSetAux (cdr matrix) x (+ y 1) M N num)))
+               (else
+                (candidateSetAux (cdr matrix) x (+ y 1) M N num))))))
+
+; Verifies how many moves are left 
+(define (movesLeft matrix M N)
+  (cond ((equal? (candidateSet matrix 0 0 M N 0) '())
+         #f)
+        (else #t)))
+
          
