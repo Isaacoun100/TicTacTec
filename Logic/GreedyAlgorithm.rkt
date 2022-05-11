@@ -94,7 +94,7 @@
 ; computer, and 1 for the player) then it calculates the best possible move based on the greedy
 ; algorithm
 (define (getBestMove matrix M N)
-  (getBestMoveAux matrix -100 M N 0 0 -1 -1))
+  (getBestMoveAux matrix -1000 M N 0 0 -1 -1))
 
 ; This function will return the position i j where the greedy algorithm analized and concluded
 ; that is the best posible move in the given position using this algorithm
