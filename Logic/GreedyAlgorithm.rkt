@@ -137,41 +137,41 @@
         ((equal? (movesLeft matrix M N) #f)
          0)
         (isMax
-         (Maxer matrix -1000 M N 0 0 isMax depth))
+         (maxer matrix -1000 M N 0 0 isMax depth))
         (else
-         (minimizer matrix 1000 M N 0 0 isMax depth))))
+         (seekMinimum matrix 1000 M N 0 0 isMax depth))))
 
 ; Looks for the value with the best score in the given depth
-(define (Maxer matrix best M N I J isMax depth)
+(define (maxer matrix best M N I J isMax depth)
   (cond ((equal? I M)
          best)
         ((equal? J N)
-         (Maxer matrix best M N (+ I 1) 0 isMax depth))                                          
+         (maxer matrix best M N (+ I 1) 0 isMax depth))                                          
         ((equal?(getMatrixValue matrix I J) 0)
-         (Maxer matrix
+         (maxer matrix
                     (max best (minMax (appendValueMatrix matrix I J 1)
                              (+ depth 1) (not isMax) M N 0 0
                              (getState
                               (appendValueMatrix matrix I J 1)
                               M N))) M N I (+ J 1) isMax depth))
         (else
-         (Maxer matrix best
+         (maxer matrix best
                     M N I (+ J 1) isMax depth))))
 
 ; Looks for the value with the best score in the given depth
-(define (minimizer matrix best M N I J isMax depth) 
+(define (seekMinimum matrix best M N I J isMax depth) 
   (cond ((equal? I M)
          best)
         ((equal? J N)
-         (minimizer matrix best M N (+ I 1) 0 isMax depth))
+         (seekMinimum matrix best M N (+ I 1) 0 isMax depth))
         ((equal?(getMatrixValue matrix I J) 0)
-         (minimizer matrix
+         (seekMinimum matrix
                     (min best(minMax (appendValueMatrix matrix I J -1)
                              (+ depth 1) (not isMax) M N 0 0
                              (getState (appendValueMatrix matrix I J -1) M N)))
                     M N I (+ J 1) isMax depth))
         (else
-         (minimizer matrix best
+         (seekMinimum matrix best
                     M N I (+ J 1) isMax depth))))
 
 ; This line of code was a solution fix found in the racket documentation
@@ -199,7 +199,7 @@
         #f)
         ((equal? cont 3)
          #t)
-        ((>= (+ B 1) j)
+        ((> B j)
          (checkHorizontal matrix i j (+ A 1) 0 M 0))
         ((equal? (getMatrixValue matrix A B) M)
          (checkHorizontal matrix i j A (+ B 1) M (+ cont 1)))
@@ -227,9 +227,9 @@
         (else #f)))
 
 ; Recursively navigates through the matrix looking for
-; provable wins in the diagonals
-(define (checkDiagonal matrix i j A B M)
-  (cond ((and (< i A))
+; provable wins in the left diagonal
+(define (CheckDiagonalLeft matrix i j A B M)
+  (cond ((and (= i A))
          #f)
         ((and (>= i (+ B 2))(>= j (+ A 2))
               (equal? (getMatrixValue matrix A B) M)
@@ -237,14 +237,30 @@
               (equal? (getMatrixValue matrix (+ A 2) (+ B 2)) M))
          #t)
         (else
-         (checkDiagonalAux matrix i j A B M))))
+         (CheckDiagonalLeftAux matrix i j A B M))))
 
-(define (checkDiagonalAux matrix i j A B M)
+(define (CheckDiagonalLeftAux matrix i j A B M)
   (cond ((= B j)
-         (checkDiagonal matrix i j (+ A 1) 0 M))
-        (else (checkDiagonal matrix i j A (+ B 1) M))))
+         (CheckDiagonalLeft matrix i j (+ A 1) 0 M))
+        (else (CheckDiagonalLeft matrix i j A (+ B 1) M))))
 
+; Recursively navigates through the matrix looking for
+; provable wins in the right diagonal
+(define (CheckDiagonalRight matrix i j A B M)
+  (cond ((and (= i A))
+         #f)
+        ((and (<= 0 (- B 2))(>= j (+ A 2))
+              (equal? (getMatrixValue matrix A B) M)
+              (equal? (getMatrixValue matrix (+ A 1) (- B 1)) M)
+              (equal? (getMatrixValue matrix (+ A 2) (- B 2)) M))
+         #t)
+        (else
+         (CheckDiagonalRightAux matrix i j A B M))))
 
+(define (CheckDiagonalRightAux matrix i j A B M)
+  (cond ((= B j)
+         (CheckDiagonalRight matrix i j (+ A 1) 0 M))
+        (else (CheckDiagonalRight matrix i j A (+ B 1) M))))
 
 ; This funtion will return 10 if the player has won, -10 if the computer won or 0
 ; there no winner yet
@@ -260,9 +276,13 @@
         ((checkHorizontal matrix M N 0 0 -1 0)
          -10) ; Check if the machine won horizontally
 
-        ((checkDiagonal matrix M N 0 0 1)
+        ((CheckDiagonalLeft matrix M N 0 0 1)
+         10) ; Check if the player won diagonally
+         ((CheckDiagonalRight matrix M N 0 0 1)
          10); Check if the player won diagonally
-        ((checkDiagonal matrix M N 0 0 -1)
+        ((CheckDiagonalLeft matrix M N 0 0 -1)
+         -10) ; Check if the player won diagonally
+         ((CheckDiagonalRight matrix M N 0 0 -1)
          -10); Check if the machine won diagonally
 
         (else 0))) ; There's no winner yet
