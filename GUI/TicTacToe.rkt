@@ -1,8 +1,7 @@
 #lang racket
 
 (require racket/gui)
-(require racket/include)
-(include "GreedyAlgorithm.rkt")
+(require "../Logic/GreedyAlgorithm.rkt")
 
 ;Kisung Lim
 ;Pablo Esquivel Morales
@@ -50,13 +49,13 @@
                     (cond((equal?(getState gameTable Np Mp)10)
                           (displayln "¡Felicidades, ganó!")
                           (send frame show #f))
-                         ((equal?(candidateSet gameTable 0 0 Np Mp 0)'())
+                         ((equal?(setCandidates gameTable 0 0 Np Mp 0)'())
                           (displayln "Empate, ¡bien jugado!")
                           (send frame show #f))
                          (else
                           ;Si no hay ganador corre finBestMove que devuelve una lista x y.
                           (drawEle pX pY (send this get-dc) 0)
-                          (set! aiList (findBestMove gameTable Np Mp))
+                          (set! aiList (getBestMove gameTable Np Mp))
                           (drawEle (cadr aiList) (car aiList) 
                                    (send this get-dc) 1)
                           (set! gameTable(putM (car aiList) (cadr aiList) gameTable -1))
@@ -64,7 +63,7 @@
                           (cond((equal?(getState gameTable Np Mp)-10)
                                 (displayln "Buen intento, mejor suerte la próxima.")
                                 (send frame show #f))
-                               ((equal?(candidateSet gameTable 0 0 Np Mp 0)'())
+                               ((equal?(setCandidates gameTable 0 0 Np Mp 0)'())
                                 (displayln "Empate, ¡bien jugado!")
                                 (send frame show #f)))
                     ))
