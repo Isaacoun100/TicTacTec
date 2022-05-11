@@ -101,7 +101,7 @@
                     ; This function runs every time there is a new turn, its job
                     ; is to identify if the computer won, if the player won, if
                     ; there's a draw or if nothing has happened
-                    (cond((equal?(getState gameBoard Np Mp)10)
+                    (cond((equal?(getState gameBoard np mp)10)
 
                           ; It will dispkay a finnishing message in the console
                           ; saying "The player is the winner" if the algorithm
@@ -109,7 +109,7 @@
                           (displayln "The player is the winner")
                           (send frame show #f))
 
-                         ((equal?(setCandidates gameBoard 0 0 Np Mp 0)'())
+                         ((equal?(setCandidates gameBoard 0 0 np mp 0)'())
 
                           ; If on the other hand, the algorithm has determinated
                           ; that the game ended in a draw, then, it will display
@@ -122,7 +122,7 @@
                           ; current matrix to the getBestMove function to find
                           ; the next best move to play
                           (drawEle pX pY (send this get-dc) 0)
-                          (set! aiList (getBestMove gameBoard Np Mp))
+                          (set! aiList (getBestMove gameBoard np mp))
                           (drawEle (cadr aiList) (car aiList)
                                    (send this get-dc) 1)
                           (set! gameBoard(putM (car aiList) (cadr aiList) gameBoard -1))
@@ -131,14 +131,14 @@
                           ;If after the move it finds that the computer is the
                           ; winner, then it will display the message "You lose,
                           ; better luck next time"
-                          (cond((equal?(getState gameBoard Np Mp)-10)
+                          (cond((equal?(getState gameBoard np mp)-10)
                                 (displayln "You lose, better luck next time")
                                 (send frame show #f))
 
                                 ; If after the machine plays there is no winner
                                 ; and it finds that there's no point in keep
                                 ; playing, then it will display a message saying
-                               ((equal?(setCandidates gameBoard 0 0 Np Mp 0)'())
+                               ((equal?(setCandidates gameBoard 0 0 np mp 0)'())
                                 (displayln "Is a draw!, Thanks for playing")
                                 (send frame show #f)
                                 ))))))))) (super-new)))
@@ -202,7 +202,7 @@
 ; Auxiliarty function for the putM fucntion
 (define (putM_aux y matrix num)
   (cond ((equal? y 0)
-         (cons num (cdr matrix))).
+         (cons num (cdr matrix)))
         (else (cons (car matrix)(putM_aux (- y 1) (cdr matrix) num)))))
 
 ; When checking if the user has pressed twice the same tile, this method will be
@@ -233,8 +233,8 @@
                 (set! frame (new frame%[label "TIC TAC TEC"]
                   [stretchable-height #f]
                   [stretchable-width #f]))
-                (set! Mp M)
-                (set! Np N)
+                (set! mp M)
+                (set! np N)
                 (set! gameBoard (makeTable 0 0 M N '()))
                 (cond ((> M N)(calcSqr M))
                       (else(calcSqr N)))
