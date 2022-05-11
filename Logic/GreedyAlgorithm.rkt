@@ -94,7 +94,7 @@
 ; computer, and 1 for the player) then it calculates the best possible move based on the greedy
 ; algorithm
 (define (getBestMove matrix M N)
-  (getBestMoveAux matrix -1000 M N 0 0 -1 -1))
+  (getBestMoveAux matrix -100 M N 0 0 -1 -1))
 
 ; This function will return the position i j where the greedy algorithm analized and concluded
 ; that is the best posible move in the given position using this algorithm
@@ -209,22 +209,17 @@
 
 
 ; Returns true or false depending on whether or not there's a vertical win
-(define (checkVertical matrix M N I J num)
-  (cond ((equal? J N)#f)
-        ((equal? I M)#f)
-        ((and(equal? (getMatrixValue matrix I J) num)
-             (checkVerticalAux matrix M N (+ I 1) J num))#t)
-
+(define (checkVertical matrix i j A B M cont)
+  (cond ((> B j)
+         #f)
+        ((equal? cont 3)
+         #t)
+        ((> A i) (checkVertical matrix i j 0 (+ B 1) M 0))
+        ((equal? (getMatrixValue matrix A B) M)
+         (checkVertical matrix i j (+ A 1) B M (+ cont 1)))
         (else
-         (checkVertical matrix M N 0 (+ J 1) num))))
-
-; Auxiliary function for the checkVertical function
-(define (checkVerticalAux matrix M N I J num)
-  (cond ((equal? J N)#f)
-        ((equal? I M)#t)
-        ((and(equal? (getMatrixValue matrix I J) num)
-             (checkVerticalAux matrix M N (+ I 1) J num))#t)
-        (else #f)))
+         (checkVertical matrix i j (+ A 1) B M 0))
+        ))
 
 ; Recursively navigates through the matrix looking for
 ; provable wins in the left diagonal
@@ -266,9 +261,9 @@
 ; there no winner yet
 
 (define (getState matrix M N)
-  (cond ((checkVertical matrix M N 0 0 1)
+  (cond ((checkVertical matrix M N 0 0 1 0)
          10) ; Check if the player won vertically
-        ((checkVertical matrix M N 0 0 -1)
+        ((checkVertical matrix M N 0 0 -1 0)
          -10) ; Check if the machine won vertically
 
         ((checkHorizontal matrix M N 0 0 1 0)
@@ -280,6 +275,7 @@
          10) ; Check if the player won diagonally
          ((CheckDiagonalRight matrix M N 0 0 1)
          10); Check if the player won diagonally
+         
         ((CheckDiagonalLeft matrix M N 0 0 -1)
          -10) ; Check if the player won diagonally
          ((CheckDiagonalRight matrix M N 0 0 -1)
